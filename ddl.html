@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>DDL Algorithm</title>
+    <style>
+        .myCanvas {
+            border: 1px solid black;
+            width: 500px;
+            height: 500px;
+        }
+    </style>
+</head>
+<body>
+    <canvas class="myCanvas" ></canvas>
+    <script>
+        let x1 = parseFloat(prompt("Enter x1: "));
+        let y1 = parseFloat(prompt("Enter y1: "));
+        let x2 = parseFloat(prompt("Enter x2: "));
+        let y2 = parseFloat(prompt("Enter y2: "));
+
+        let dx = x2 - x1;
+        let dy = y2 - y1;
+
+        const step = Math.max(Math.abs(dx), Math.abs(dy));
+        const xIncrement = dx / step;
+        const yIncrement = dy / step;
+
+        const canvas = document.querySelector('.myCanvas');
+        const ctx = canvas.getContext('2d');
+
+        for(let i=0; i <= step; i++) {
+            ctx.fillStyle = "Red";
+            ctx.fillRect(Math.round(x1), Math.round(y1), 4, 4);
+            x1 += xIncrement;
+            y1 += yIncrement;
+        }
+    </script>
+</body>
+</html>
