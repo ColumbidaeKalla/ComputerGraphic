@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>2D Reflection</title>
+</head>
+<body>
+    <canvas id="myCanvas" width="300" height="300" style="border: 1px solid #000;"></canvas>
+    <script>
+        const canvas = document.getElementById("myCanvas");
+        const ctx = canvas.getContext('2d');
+        ctx.translate(canvas.width / 2, canvas.height / 2); // Center origin
+        ctx.scale(1, -1);
+
+        let x = parseInt(prompt("Enter x:"));
+        let y = parseInt(prompt("Enter y:"));
+        
+        function drawPoint(px, py, color) {
+            ctx.beginPath();
+            ctx.arc(px, py, 4, 0, 2 * Math.PI);
+            ctx.fillStyle = color;
+            ctx.fill();
+        }
+        drawPoint(x, y, 'blue');                   // Original point
+        drawPoint(x, -y, 'red');                   // Reflection over X-axis
+        drawPoint(-x, y, 'green');                 // Reflection over Y-axis
+        drawPoint(-x, -y, 'purple');               // Reflection over origin
+
+        console.log("Reflected Points:");
+        console.log(`About X-axis: (${x}, ${-y})`);
+        console.log(`About Y-axis: (${-x}, ${y})`);
+        console.log(`About Origin: (${-x}, ${-y})`);
+    </script>
+</body>
+</html>

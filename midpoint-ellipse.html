@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>Midpoint Ellipse Drawing Algorithm</title>
+</head>
+<body>
+    <canvas id="myCanvas" width="300" height="300" style="border: 1px solid #000;"></canvas>
+    <script>
+        let xc = parseInt(prompt("Enter xc:"));
+        let yc = parseInt(prompt("Enter yc:"));
+        let rx = parseInt(prompt("Enter rx:"));
+        let ry = parseInt(prompt("Enter ry:"));
+
+        let x = 0;
+        let y = ry;
+        let rx2 = rx * rx;
+        let ry2 = ry * ry;
+        let p1 = ry2 - rx2 * ry + 0.25 * rx2;
+        let dx = 2 * ry2 * x;
+        let dy = 2 * rx2 * y;
+
+        const canvas = document.getElementById("myCanvas");
+        const ctx = canvas.getContext('2d');
+        ctx.translate(canvas.height / 2, canvas.width / 2);
+
+        function plotEllipse(x, y) {
+            ctx.fillRect(x, -y, 2, 2);
+        }
+
+        console.log("Midpoint Ellipse Points:");
+
+        function plot(x, y) {
+            console.log(`(${xc + x}, ${yc + y})`);
+            console.log(`(${xc - x}, ${yc + y})`);
+            console.log(`(${xc + x}, ${yc - y})`);
+            console.log(`(${xc - x}, ${yc - y})`);
+
+            plotEllipse(xc + x, yc + y);
+            plotEllipse(xc - x, yc + y);
+            plotEllipse(xc + x, yc - y);
+            plotEllipse(xc - x, yc - y);
+        }
+
+        // Region 1
+        while (dx < dy) {
+            plot(x, y);
+            x++;
+            dx = 2 * ry2 * x;
+            if (p1 < 0) {
+                p1 += dx + ry2;
+            } else {
+                y--;
+                dy = 2 * rx2 * y;
+                p1 += dx - dy + ry2;
+            }
+        }
+
+        // Region 2
+        let p2 = ry2 * (x + 0.5) ** 2 + rx2 * (y - 1) ** 2 - rx2 * ry2;
+        while (y >= 0) {
+            plot(x, y);
+            y--;
+            dy = 2 * rx2 * y;
+            if (p2 > 0) {
+                p2 -= dy + rx2;
+            } else {
+                x++;
+                dx = 2 * ry2 * x;
+                p2 += dx - dy + rx2;
+            }
+        }
+    </script>
+</body>
+</html>

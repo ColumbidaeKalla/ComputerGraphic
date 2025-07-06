@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Midpoint Circle Drawing Algorithm</title>
+</head>
+<body>
+  <canvas id="myCanvas" height="300" width="300" style="border: 1px solid #000;"></canvas>
+  <script>
+    let xc = parseInt(prompt("Enter xc:"));
+    let yc = parseInt(prompt("Enter yc:"));
+    let r = parseInt(prompt("Enter r:"));
+    let x = 0, y = r, p = 1 - r;
+
+    const canvas = document.getElementById("myCanvas");
+    const ctx = canvas.getContext('2d');
+    ctx.translate(canvas.width / 2, canvas.height / 2);
+
+    console.log("Midpoint Circle Points:");
+    function plot(x, y) {
+      ctx.fillRect(x, -y, 2, 2);
+    }
+
+    function plotCirclePoints(x, y) {
+      console.log(`(${xc + x}, ${yc + y})`);
+      console.log(`(${xc - x}, ${yc + y})`);
+      console.log(`(${xc + x}, ${yc - y})`);
+      console.log(`(${xc - x}, ${yc - y})`);
+      console.log(`(${xc + y}, ${yc + x})`);
+      console.log(`(${xc - y}, ${yc + x})`);
+      console.log(`(${xc + y}, ${yc - x})`);
+      console.log(`(${xc - y}, ${yc - x})`);
+
+      plot(xc + x, yc + y);
+      plot(xc - x, yc + y);
+      plot(xc + x, yc - y);
+      plot(xc - x, yc - y);
+      plot(xc + y, yc + x);
+      plot(xc - y, yc + x);
+      plot(xc + y, yc - x);
+      plot(xc - y, yc - x);
+    }
+
+    plotCirclePoints(x, y);
+    while (x <= y) {
+      x++;
+      if (p < 0) p += 2 * x + 1;
+      else {
+        y--;
+        p += 2 * (x - y) + 1;
+      }
+      plotCirclePoints(x, y);
+    }
+  </script>
+</body>
+</html>

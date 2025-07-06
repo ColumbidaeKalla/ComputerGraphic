@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>3D Translation (Projected to 2D)</title>
+</head>
+<body>
+    <canvas id="myCanvas" width="400" height="400" style="border: 1px solid #000;"></canvas>
+    <script>
+        const canvas = document.getElementById("myCanvas");
+        const ctx = canvas.getContext('2d');
+        ctx.translate(canvas.width / 2, canvas.height / 2); // Center the origin
+        ctx.scale(1, -1); // Invert Y for traditional Cartesian coords
+
+        // Get input from user
+        let x = parseInt(prompt("Enter x:"));
+        let y = parseInt(prompt("Enter y:"));
+        let z = parseInt(prompt("Enter z:"));
+        let tx = parseInt(prompt("Enter tx (translation in x):"));
+        let ty = parseInt(prompt("Enter ty (translation in y):"));
+        let tz = parseInt(prompt("Enter tz (translation in z):"));
+
+        // Translate the point
+        let xNew = x + tx;
+        let yNew = y + ty;
+        let zNew = z + tz;
+
+        // Simple projection: (x + 0.5*z, y + 0.5*z)
+        let project = (x, y, z) => [x + 0.5 * z, y + 0.5 * z];
+
+        // Draw original point
+        let [px1, py1] = project(x, y, z);
+        ctx.fillStyle = "blue";
+        ctx.fillRect(px1, py1, 2, 2);
+
+        // Draw translated point
+        let [px2, py2] = project(xNew, yNew, zNew);
+        ctx.fillStyle = "red";
+        ctx.fillRect(px2, py2, 2, 2);
+
+        console.log(`Original 3D point: (${x}, ${y}, ${z})`);
+        console.log(`Translated 3D point: (${xNew}, ${yNew}, ${zNew})`);
+        console.log(`Projected 2D Original: (${px1}, ${py1})`);
+        console.log(`Projected 2D Translated: (${px2}, ${py2})`);
+    </script>
+</body>
+</html>

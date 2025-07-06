@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Polygon Clipping</title>
+</head>
+<body>
+<canvas id="myCanvas" width="500" height="500" style="border: 1px solid #000;"></canvas>
+<script>
+  const canvas = document.getElementById("myCanvas");
+  const ctx = canvas.getContext("2d");
+
+  // Center and invert y-axis
+  ctx.translate(canvas.width / 2, canvas.height / 2);
+  ctx.scale(1, -1);
+
+  // Clipping rectangle boundaries
+  const xmin = -100, xmax = 100, ymin = -100, ymax = 100;
+
+  // Draw clipping window
+  function drawClipWindow() {
+    ctx.strokeStyle = "blue";
+    ctx.beginPath();
+    ctx.rect(xmin, -ymax, xmax - xmin, ymax - ymin);
+    ctx.stroke();
+  }
+
+  // Draw polygon
+  function drawPolygon(polygon, color = "green") {
+    if (polygon.length < 2) return;
+    ctx.strokeStyle = color;
+    ctx.beginPath();
+    ctx.moveTo(polygon[0][0], polygon[0][1]);
+    for (let i = 1; i < polygon.length; i++) {
+      ctx.lineTo(polygon[i][0], polygon[i][1]);
+    }
+    ctx.lineTo(polygon[0][0], polygon[0][1]);
+    ctx.stroke();
+  }
+
+  // Inside check for each edge
+  function inside(p, edge) {
+    let [x, y] = p;
+    switch (edge) {
+      case 0: return x >= xmin;  // Left
+      case 1: return x <= xmax;  // Right
+      case 2: return y >= ymin;  // Bottom
+      case 3: return y <= ymax;  // Top
+    }
+  }
+
+  // Find intersection point
+  function intersect(p1, p2, edge) {
+    let [x1, y1] = p1;
+    let [x2, y2] = p2;
+    let m = (y2 - y1) / (x2 - x1);
+    switch (edge) {
+      case 0: return [xmin, y1 + m * (xmin - x1)];
+      case 1: return [xmax, y1 + m * (xmax - x1)];
+      case 2: return [x1 + (ymin - y1) / m, ymin];
+      case 3: return [x1 + (ymax - y1) / m, ymax];
+    }
+  }
+
+  // Sutherland–Hodgman Polygon Clipping
+  function sutherlandHodgman(polygon) {
+    for (let edge = 0; edge < 4; edge++) {
+      let input = polygon.slice();
+      polygon = [];
+      for (let i = 0; i < input.length; i++) {
+        let A = input[i];
+        let B = input[(i + 1) % input.length];
+
+        if (inside(B, edge)) {
+          if (!inside(A, edge)) {
+            polygon.push(intersect(A, B, edge));
+          }
+          polygon.push(B);
+        } else if (inside(A, edge)) {
+          polygon.push(intersect(A, B, edge));
+        }
+      }
+    }
+    return polygon;
+  }
+
+  // Sample polygon input
+  let polygon = [
+    [-150, 70],
+    [120, 120],
+    [180, -40],
+    [-60, -100]
+  ];
+
+  drawClipWindow();
+  drawPolygon(polygon, "gray"); // Original polygon (before clipping)
+
+  let clipped = sutherlandHodgman(polygon);
+  drawPolygon(clipped, "red"); // Clipped polygon
+
+</script>
+</body>
+</html>

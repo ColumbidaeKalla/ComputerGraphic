@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Line Clipping - Cohen Sutherland</title>
+</head>
+<body>
+<canvas id="myCanvas" width="300" height="300" style="border:1px solid #000;"></canvas>
+<script>
+  const canvas = document.getElementById("myCanvas");
+  const ctx = canvas.getContext("2d");
+
+  // Translate to center and invert Y-axis
+  ctx.translate(canvas.width / 2, canvas.height / 2);
+  ctx.scale(1, -1);
+
+  // Clipping rectangle boundaries
+  const xmin = -100, xmax = 100, ymin = -100, ymax = 100;
+
+  // Region codes
+  const INSIDE = 0, LEFT = 1, RIGHT = 2, BOTTOM = 4, TOP = 8;
+
+  // Draw clipping window
+  function drawClipWindow() {
+    ctx.strokeStyle = "blue";
+    ctx.beginPath();
+    ctx.rect(xmin, -ymax, xmax - xmin, ymax - ymin);
+    ctx.stroke();
+  }
+
+  // Cohen–Sutherland outcode calculation
+  function computeOutCode(x, y) {
+    let code = INSIDE;
+    if (x < xmin) code |= LEFT;
+    else if (x > xmax) code |= RIGHT;
+    if (y < ymin) code |= BOTTOM;
+    else if (y > ymax) code |= TOP;
+    return code;
+  }
+
+  // Cohen–Sutherland Line Clipping
+  function cohenSutherlandClip(x1, y1, x2, y2) {
+    let outcode1 = computeOutCode(x1, y1);
+    let outcode2 = computeOutCode(x2, y2);
+    let accept = false;
+
+    while (true) {
+      if (!(outcode1 | outcode2)) {
+        // Trivially inside
+        accept = true;
+        break;
+      } else if (outcode1 & outcode2) {
+        // Trivially outside
+        break;
+      } else {
+        // Clipping needed
+        let outcodeOut = outcode1 ? outcode1 : outcode2;
+        let x, y;
+
+        if (outcodeOut & TOP) {
+          x = x1 + (x2 - x1) * (ymax - y1) / (y2 - y1);
+          y = ymax;
+        } else if (outcodeOut & BOTTOM) {
+          x = x1 + (x2 - x1) * (ymin - y1) / (y2 - y1);
+          y = ymin;
+        } else if (outcodeOut & RIGHT) {
+          y = y1 + (y2 - y1) * (xmax - x1) / (x2 - x1);
+          x = xmax;
+        } else if (outcodeOut & LEFT) {
+          y = y1 + (y2 - y1) * (xmin - x1) / (x2 - x1);
+          x = xmin;
+        }
+
+        if (outcodeOut === outcode1) {
+          x1 = x; y1 = y;
+          outcode1 = computeOutCode(x1, y1);
+        } else {
+          x2 = x; y2 = y;
+          outcode2 = computeOutCode(x2, y2);
+        }
+      }
+    }
+
+    if (accept) {
+      // Draw clipped line
+      ctx.strokeStyle = "red";
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.stroke();
+    }
+  }
+
+  // Get user input and draw
+  let x1 = parseInt(prompt("Enter x1:"));
+  let y1 = parseInt(prompt("Enter y1:"));
+  let x2 = parseInt(prompt("Enter x2:"));
+  let y2 = parseInt(prompt("Enter y2:"));
+
+  drawClipWindow(); // draw rectangle
+  cohenSutherlandClip(x1, y1, x2, y2); // clip and draw line
+
+</script>
+</body>
+</html>

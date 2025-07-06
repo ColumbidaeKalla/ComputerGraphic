@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>Bresenhams Line Drawing Algorithm</title>
+</head>
+<body>
+    <canvas id="myCanvas" width="300" height="300" style="border: 1px solid #000;"></canvas>
+    <script>
+        let x1 = parseInt(prompt("Enter x1:"));
+        let y1 = parseInt(prompt("Enter y1:"));
+        let x2 = parseInt(prompt("Enter x2:"));
+        let y2 = parseInt(prompt("Enter y2:"));
+
+        let dx = Math.abs(x2 - x1);
+        let dy = Math.abs(y2 - y1);
+        let sx = x1 < x2 ? 1 : -1;
+        let sy = y1 < y2 ? 1 : -1;
+        let err = dx - dy;
+
+        const canvas = document.getElementById("myCanvas");
+        const ctx = canvas.getContext('2d');
+        ctx.translate(canvas.width / 2, canvas.height / 2);
+
+        console.log("Bresenham Line Points:");
+        while (true) {
+            console.log(`(${x1}, ${y1})`);
+            ctx.fillRect(x1, -y1, 2, 2);
+            if (x1 === x2 && y1 === y2) break;
+            let e2 = 2 * err;
+            if (e2 > -dy) { err -= dy; x1 += sx; }
+            if (e2 < dx) { err += dx; y1 += sy; }
+        }
+    </script>
+</body>
+</html>
